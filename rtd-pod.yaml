@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rtdenoise-training
+spec:
+  containers:
+    - name: rtdenoise-container
+      image: saadam1n/rtdenoise
+      resources:
+        requests:
+          memory: "48Gi"
+          cpu: "20"
+          nvidia.com/gpu: "1" 
+        limits:
+          memory: "64Gi"
+          cpu: "24"
+          nvidia.com/gpu: "1" 
+      volumeMounts:
+      - mountPath: /mnt/datasets/
+        name: trainingdata
+  volumes:
+  - name: trainingdata
+    persistentVolumeClaim:
+      claimName: rtd-pvc
