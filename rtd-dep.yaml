@@ -1,31 +1,44 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rtdenoise-training
+  name: diffsvgf-rtdenoise-training
   labels:
-    name: rtdenoise-training
+    name: diffsvgf-rtdenoise-training
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: rtdenoise-training
+      name: diffsvgf-rtdenoise-training
   template:
     metadata:
       labels:
-        name: rtdenoise-training
+        name: diffsvgf-rtdenoise-training
     spec:
       containers:
-      - name: rtdenoise-container
-        image: saadam1n/rtdenoise
+      - name: diffsvgf-rtdenoise-training
+        image: saadam1n/rtdenoise:latest
+        command: ["/bin/sh", "-c", " RTDENOISE_DATASET_PATH=/mnt/fast_denoise_dataset/ RTDENOISE_OUTPUT_PATH=/mnt/rtdenoise_out/ python3 -u scripts/sample_train.py"]
         resources:
           requests:
             memory: "32Gi"
-            cpu: "8"
+            cpu: "20"
             nvidia.com/gpu: "1" 
           limits:
-            memory: "48Gi"
-            cpu: "10"
+            memory: "32Gi"
+            cpu: "20"
             nvidia.com/gpu: "1" 
+        volumeMounts:
+        - mountPath: /mnt/fast_denoise_dataset/
+          name: fast-denoise-dataset
+        - mountPath: /mnt/rtdenoise_out/
+          name: rtd-cache-pvc
+      volumes:
+          - name: fast-denoise-dataset
+            persistentVolumeClaim:
+              claimName: fast-denoise-dataset
+          - name: rtd-cache-pvc
+            persistentVolumeClaim:
+              claimName: rtd-cache-pvc
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -34,4 +47,9 @@ spec:
               - key: nvidia.com/gpu.product
                 operator: In
                 values:
+                - NVIDIA-L40
+                - NVIDIA-A100-SXM4-80GB
+                - NVIDIA-RTX-A6000
+                - NVIDIA-A40
                 - NVIDIA-GeForce-RTX-3090
+                - Quadro-RTX-8000

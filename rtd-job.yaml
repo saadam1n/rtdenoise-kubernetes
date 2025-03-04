@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: diffsvgf-rtdenoise-training
+  labels:
+    name: diffsvgf-rtdenoise-training
+spec:
+  completions: 1
+  parallelism: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: diffsvgf-rtdenoise-training
+        image: saadam1n/rtdenoise:latest
+        command: ["/bin/sh", "-c", " RTDENOISE_DATASET_PATH=/mnt/fast_denoise_dataset/ RTDENOISE_OUTPUT_PATH=/mnt/rtdenoise_out/ python3 -u scripts/sample_train.py"]
+        resources:
+          requests:
+            memory: "192Gi"
+            cpu: "48"
+            nvidia.com/gpu: "4" 
+          limits:
+            memory: "192Gi"
+            cpu: "48"
+            nvidia.com/gpu: "4" 
+        volumeMounts:
+        - mountPath: /mnt/fast_denoise_dataset/
+          name: rtdenoise-dataset-tar
+        - mountPath: /mnt/rtdenoise_out/
+          name: rtd-cache-pvc
+        - mountPath: /dev/shm
+          name: dshm
+      volumes:
+          - name: rtdenoise-dataset-tar
+            persistentVolumeClaim:
+              claimName: rtdenoise-dataset-tar
+          - name: rtd-cache-pvc
+            persistentVolumeClaim:
+              claimName: rtd-cache-pvc
+          - name: dshm
+            emptyDir:
+              medium: Memory
+              sizeLimit: 164Gi
