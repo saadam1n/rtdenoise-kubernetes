@@ -13,19 +13,17 @@ spec:
       containers:
       - name: diffsvgf-rtdenoise-training
         image: saadam1n/rtdenoise:latest
-        command: ["/bin/sh", "-c", "RTDENOISE_DATASET_PATH=/mnt/rtdenoise_dataset_filtered_prebatched/ RTDENOISE_OUTPUT_PATH=/mnt/rtdenoise_out/ RTDENOISE_DOWNLOAD_CACHE=/mnt/download_cache/ python3 -u scripts/sample_train.py"]
+        command: ["/bin/sh", "-c", "RTDENOISE_DATASET_PATH=/mnt/rtdenoise_dataset_tar_filtered/ RTDENOISE_OUTPUT_PATH=/mnt/rtdenoise_out/ RTDENOISE_DOWNLOAD_CACHE=/mnt/download_cache/ python3 -u scripts/sample_train.py"]
         resources:
           requests:
-            memory: "128Gi"
-            cpu: "64"
-            nvidia.com/gpu: "4" 
+            memory: "192Gi"
+            cpu: "360"
           limits:
-            memory: "128Gi"
-            cpu: "64"
-            nvidia.com/gpu: "4" 
+            memory: "192Gi"
+            cpu: "360"
         volumeMounts:
-        - mountPath: /mnt/rtdenoise_dataset_filtered_prebatched/
-          name: rtdenoise-dataset-filtered-prebatched
+        - mountPath: /mnt/rtdenoise_dataset_tar_filtered/
+          name: rtdenoise-dataset-tar-filtered
         - mountPath: /mnt/rtdenoise_out/
           name: rtd-cache-pvc
         - mountPath: /dev/shm
@@ -33,16 +31,16 @@ spec:
         - mountPath: /mnt/download_cache
           name: download-cache
       volumes:
-          - name: rtdenoise-dataset-filtered-prebatched
+          - name: rtdenoise-dataset-tar-filtered
             persistentVolumeClaim:
-              claimName: rtdenoise-dataset-filtered-prebatched
+              claimName: rtdenoise-dataset-tar-filtered
           - name: rtd-cache-pvc
             persistentVolumeClaim:
               claimName: rtd-cache-pvc
           - name: dshm
             emptyDir:
               medium: Memory
-              sizeLimit: 48Gi
+              sizeLimit: 64Gi
           - name: download-cache
             emptyDir:
               medium: Memory

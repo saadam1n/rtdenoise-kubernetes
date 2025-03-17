@@ -13,37 +13,37 @@ spec:
       containers:
       - name: diffsvgf-rtdenoise-training
         image: saadam1n/rtdenoise:latest
-        command: ["/bin/sh", "-c", "RTDENOISE_DATASET_PATH=/mnt/rtdenoise_dataset_filtered_prebatched/ RTDENOISE_OUTPUT_PATH=/mnt/rtdenoise_out/ RTDENOISE_DOWNLOAD_CACHE=/mnt/download_cache/ python3 -u scripts/sample_train.py"]
+        command: ["/bin/sh", "-c", "RTDENOISE_DATASET_PATH=/mnt/rtdenoise_dataset_tar_filtered_mini/ RTDENOISE_OUTPUT_PATH=/mnt/rtdenoise_out/ RTDENOISE_DOWNLOAD_CACHE=/mnt/download_cache/ python3 -u scripts/sample_train.py"]
         resources:
           requests:
-            memory: "128Gi"
-            cpu: "64"
-            nvidia.com/gpu: "4" 
+            memory: "48Gi"
+            cpu: "20"
+            nvidia.com/gpu: "1" 
           limits:
-            memory: "128Gi"
-            cpu: "64"
-            nvidia.com/gpu: "4" 
+            memory: "48Gi"
+            cpu: "20"
+            nvidia.com/gpu: "1" 
         volumeMounts:
-        - mountPath: /mnt/rtdenoise_dataset_filtered_prebatched/
-          name: rtdenoise-dataset-filtered-prebatched
+        - mountPath: /mnt/rtdenoise_dataset_tar_filtered_mini/
+          name: rtdenoise-dataset-tar-filtered-mini
         - mountPath: /mnt/rtdenoise_out/
-          name: rtd-cache-pvc
+          name: rtd-cache-pvc-mini
         - mountPath: /dev/shm
           name: dshm
         - mountPath: /mnt/download_cache
           name: download-cache
       volumes:
-          - name: rtdenoise-dataset-filtered-prebatched
+          - name: rtdenoise-dataset-tar-filtered-mini
             persistentVolumeClaim:
-              claimName: rtdenoise-dataset-filtered-prebatched
-          - name: rtd-cache-pvc
+              claimName: rtdenoise-dataset-tar-filtered-mini
+          - name: rtd-cache-pvc-mini
             persistentVolumeClaim:
-              claimName: rtd-cache-pvc
+              claimName: rtd-cache-pvc-mini
           - name: dshm
             emptyDir:
               medium: Memory
-              sizeLimit: 48Gi
+              sizeLimit: 16Gi
           - name: download-cache
             emptyDir:
               medium: Memory
-              sizeLimit: 48Gi
+              sizeLimit: 16Gi

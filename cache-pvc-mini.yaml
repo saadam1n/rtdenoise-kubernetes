@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: rtd-cache-pvc
+  name: rtd-cache-pvc-mini
 spec:
   storageClassName: rook-cephfs
   accessModes:
