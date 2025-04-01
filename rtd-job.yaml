@@ -18,11 +18,11 @@ spec:
           requests:
             memory: "128Gi"
             cpu: "64"
-            nvidia.com/gpu: "4" 
+            nvidia.com/gpu: "8" 
           limits:
             memory: "128Gi"
             cpu: "64"
-            nvidia.com/gpu: "4" 
+            nvidia.com/gpu: "8" 
         volumeMounts:
         - mountPath: /mnt/rtdenoise_dataset_filtered_prebatched/
           name: rtdenoise-dataset-filtered-prebatched
